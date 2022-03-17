@@ -1,0 +1,2 @@
+﻿BlazorEcommerce.Server (Web server): Hot reload session started
+BlazorEcommerce.Server (Web assembly): Hot reload session started

@@ -1,0 +1,112 @@
+﻿@page "/product/{id:int}"
+@inject IProductService ProductService
+@inject ICartService CartService
+
+<h3>Product Details</h3>
+
+<br />
+@if (product == null)
+
+{
+	<span>@ProductService.Message</span>
+}
+
+else
+{
+	<div class="media">
+
+		<div class="media-img-wrapper mr-2">
+			<img class="media-img" src="@product.ImageUrl" alt="@product.Title">
+		</div>
+		<br />
+		<div class="media-body">
+			<h2 class="mb-0">@product.Title</h2>
+			<br />
+			<p>@product.Description</p>
+
+			@if(product.Variants != null && product.Variants.Count > 1)
+			{
+				<div class="m-3">
+					<select class="form-select" @bind ="currentTypeId">
+
+						@foreach (var variant in product.Variants)
+					   {
+						   <option value="@variant.ProductTypeId">@variant.ProductType.Name</option>
+					   };
+					
+					</select>
+				</div>
+			}
+			@if(GetPricesFromVariant() != null)
+
+			{
+				@if(GetPricesFromVariant().OriginalPrice > GetPricesFromVariant().Price)
+				{
+					<h6 class="text-muted original-price"> $@GetPricesFromVariant().OriginalPrice</h6>
+				}
+			
+					<h4 class="price">$@GetPricesFromVariant().Price</h4>
+			}
+
+			<button class="btn btn-primary" @onclick="AddToCart">
+				<i class="oi oi-cart"></i>Add To Cart</button>
+	</div>
+
+	</div>
+}
+
+@code {
+
+
+	private Product?  product = null;
+	string message = string.Empty;
+	private int currentTypeId = 1;
+
+	[Parameter]
+	public int Id { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+		message = "Loading Product.....";
+		var results = await ProductService.GetProduct(Id);
+
+		//Checks if results was not successful
+		if (!results.Success)
+
+		{
+			message = results.Message;
+		}
+
+		else
+		{
+			product = results.Data;
+
+			if (product.Variants.Count > 0 )
+			{
+				currentTypeId = product.Variants[0].ProductTypeId;
+			}
+		}
+
+	}
+
+	private ProductVariant GetPricesFromVariant()
+	{
+		var variant = product.Variants.FirstOrDefault(v => v.ProductTypeId == currentTypeId);
+		return variant;
+	}
+
+	private async Task AddToCart()
+
+	{
+		var productVariant = GetPricesFromVariant();
+
+		var cartItem = new CartItem
+			{
+				ProductId = productVariant.ProductId,
+				ProductTypeId = productVariant.ProductTypeId
+			};
+
+			await CartService.AddToCart(cartItem);
+	}
+
+}

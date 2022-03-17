@@ -1,0 +1,35 @@
+﻿@inject ICartService CartSerive
+@inject ISyncLocalStorageService LocalStorage
+@implements IDisposable 
+
+
+
+<a href="cart" class="btn btn-info">
+	<i class="oi oi-cart"></i>
+	<span class="badge">@GetItemCount()</span>
+	</a>
+
+
+
+
+@code {
+
+
+	
+
+	private int GetItemCount()
+	{
+		var cart = LocalStorage.GetItem<List<CartItem>>("cart");
+		return cart != null ? cart.Count : 0;
+	}
+
+	protected override void OnInitialized()
+	{
+		CartSerive.onChange += StateHasChanged;
+	}
+
+	public void Dispose()
+	{
+		CartSerive.onChange -= StateHasChanged;
+	}
+}
