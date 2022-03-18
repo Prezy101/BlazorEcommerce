@@ -8,6 +8,7 @@ namespace BlazorEcommerce.Client.Services.ProductServices
         {
             _httpClient = httpClient;
         }
+        //Initializing a new property so we can get values to set on it
         public List<Product> Products { get; set; } = new List<Product>();
         public string Message { get; set; } = string.Empty;
 

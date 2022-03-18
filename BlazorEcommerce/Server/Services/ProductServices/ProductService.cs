@@ -10,10 +10,11 @@
 
         public async Task<ServiceResponse<List<Product>>> GetProductsAsync()
         {
+          
             //Getting data from the database, but we are using the ServiveResponse class which has a generic type field Data, to hold data from the database
             var response = new ServiceResponse<List<Product>>()
             {
-                //Data is a field from ServiceReponse which is used to hold database fields, added an orderby query
+                //Data is a field from ServiceReponse which is used to hold database fields (Generic Field), added an orderby query
                 Data = await _context.Products.OrderByDescending(p => p.Id)
                 .Include(p => p.Variants).ToListAsync()
 

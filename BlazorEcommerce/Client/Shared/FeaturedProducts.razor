@@ -2,6 +2,7 @@
 @implements IDisposable
 
 <center><h2>Top products for the day</h2></center>
+@*One of the places were we set our products using getters and setters which we initialized in our Interface*@
 @if (ProductService.Products == null && ProductService.Products.Count == 0)
 {
 	<span>@ProductService.Message</span>
